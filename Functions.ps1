@@ -28,7 +28,7 @@ if ($photo -ne $null){
 
 $proceso = $curl_mod
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendPhoto"
-$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $file  + ' -k '
+$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k '
 Start-Process $proceso -ArgumentList $argumenlist 
 
 
