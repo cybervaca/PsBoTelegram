@@ -67,7 +67,7 @@ $PC = New-Object psobject -Property @{
 $PC | select-Object Nombre, "Modelo Monitor", "Monitor Num. Serie", "Sistema Operativo", "Procesador", "Fabricante", "Modelo", "Num. Procesadores", "Memoria RAM", "Disco Duro", "Direccion IP", "MAC", "Numero de Serie" 
 }
 function public-ip {param ($botkey)
-$datos_ip_publica = Invoke-WebRequest -Uri http://ifconfig.co/json
+$datos_ip_publica = Invoke-WebRequest -Uri http://ifconfig.co/json  | ConvertFrom-Json
  $resultado = New-Object psobject -Property @{"IP"= $datos_ip_publica.ip
  "Pais" = $datos_ip_publica.country
  "Ciudad" = $datos_ip_publica.city} ; $resultado | Select-Object IP, Pais, Ciudad}
