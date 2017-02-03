@@ -8,9 +8,9 @@ Al ejecutar el script nos va a pedir tres datos necesarios para crear el shellco
 Los datos que nos pide son los siguientes:  
 
 # Parametros
-[+] Introduzca el Token del Bot de Telegram: "Aquí debermos poner el Token del bot que hayamos creado."  
-[+] Introduzca su Chat ID: "Aquí deberemos poner nuestro ID de Telegram."  
-[+] Introduzca el delay para la conexión: "En este campo seteamos el delay(retardo) entre en pc con el backdoor y nuestro chat de telegram"   
+**[+] Introduzca el Token del Bot de Telegram:** "Aquí deberemos poner el Token del bot que hayamos creado."  
+**[+] Introduzca su Chat ID:** "Aquí deberemos poner nuestro ID de Telegram."  
+**[+] Introduzca el delay para la conexión:** "En este campo seteamos el delay(retardo) entre en pc con el backdoor y nuestro chat de telegram"   
 
 Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecutarlo en el equipo objetivo.  
 
