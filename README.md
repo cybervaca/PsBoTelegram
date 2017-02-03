@@ -15,6 +15,7 @@ PSBotTelegram es un script escrito en Powershell que nos crea una backdoor que s
 Los datos que nos pide son los siguientes:  
 
 # Parametros
+![Parametros](./images/parametros.png)  
  
 **[+] Introduzca el Token del Bot de Telegram:** "Aquí deberemos poner el Token del bot que hayamos creado."  
 **[+] Introduzca su Chat ID:** "Aquí deberemos poner nuestro ID de Telegram."  
