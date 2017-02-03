@@ -23,13 +23,13 @@ Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecuta
 
 # Funciones del backdoor.
 
-[1] **/Help**  
-[2] **/Info**    
-[3] **/Shell**  
-[4] **/Whoami**   
-[5] **/Ippublic**  
-[6] **/Kill**  
-[7] **/Scriptimport**  
-[8] **/Shell nc (netcat)**  
-[9] **/Download**  
-[10] **/Screenshot**   
+[1]  **/Help**  
+[2]  **/Info**    
+[3]  **/Shell**  
+[4]  **/Whoami**   
+[5]  **/Ippublic**  
+[6]  **/Kill**  
+[7]  **/Scriptimport**  
+[8]  **/Shell nc (netcat)**  
+[9]  **/Download**  
+[10]  **/Screenshot**   
