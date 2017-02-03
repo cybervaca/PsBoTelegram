@@ -16,7 +16,7 @@ Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecuta
 
 # Funciones del backdoor.
 
-[1] **/Help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+[1] **/Help**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   
 [2] **/Info**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [3] /Shell
 [4] /Whoami
