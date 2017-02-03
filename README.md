@@ -23,13 +23,14 @@ Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecuta
 
 # Funciones del backdoor.
 
-[1]  **/Help**  
-[2]  **/Info**    
-[3]  **/Shell**  
-[4]  **/Whoami**   
-[5]  **/Ippublic**  
-[6]  **/Kill**  
-[7]  **/Scriptimport**  
-[8]  **/Shell nc (netcat)**  
-[9]  **/Download**  
-[10]  **/Screenshot**   
+[1]&nbsp;&nbsp;**/Help**&nbsp;&nbsp; (Nos muestra la ayuda)  
+[2]&nbsp;&nbsp;**/Info**&nbsp;&nbsp; (Devuelve información sobre el equipo)   
+[3]&nbsp;&nbsp;**/Shell**&nbsp;&nbsp; (/Shell + CmdLet a ejecutar )  
+[4]&nbsp;&nbsp;**/Whoami**&nbsp;&nbsp; (Devuelve el usuario que ejecutó el codigo)  
+[5]&nbsp;&nbsp;**/Ippublic**&nbsp;&nbsp; (Nos da IP publica, Pais y Ciudad del Target)  
+[6]&nbsp;&nbsp;**/Kill**&nbsp;&nbsp; (Mata el backdoor)  
+[7]&nbsp;&nbsp;**/Scriptimport**&nbsp;&nbsp; (Importa el script de powershell pasandole una url)  
+[8]&nbsp;&nbsp;**/Shell nc (netcat)**&nbsp;&nbsp; (Función de powercat https://github.com/besimorhino/powercat
+)  
+[9]&nbsp;&nbsp;**/Download**&nbsp;&nbsp; (Download mas ruta nos descarga el archivo)  
+[10]&nbsp;&nbsp;**/Screenshot**&nbsp;&nbsp; (Realiza screenshot y nos lo envia)  
