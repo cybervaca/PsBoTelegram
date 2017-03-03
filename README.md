@@ -1,28 +1,32 @@
+
+
 # PsBoTelegram
-Backdoor using Telegram and Powershell  
+Backdoor using Telegram and Powershell. Por favor, usad sólo vuestros equipos para las pruebas. No me hago responsable de un mal uso del software. Rercordad que esto sólo es una prueba de concepto. 
 
 Podeis probar el script abriendo una consola de powershell y ejecutando este comando:
 
-**IEX (curl "https://raw.githubusercontent.com/cybervaca/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
+**IEX (curl "https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
 
         ____  _____ ____      ______     __
        / __ \/ ___// __ )____/_  __/__  / /__   ____ __________ _____ __
       / /_/ /\__ \/ __  / __ \/ / / _ \/ / _ \/ __  / ___/ __  / __  __ \
      / ____/___/ / /_/ / /_/ / / /  __/ /  __/ /_/ / /  / /_/ / / / / / /
     /_/    /____/_____/\____/_/  \___/_/\___/\__, /_/   \__,_/_/ /_/ /_/
-                                        /____/
+                                            /____/
 
-                                                     v0.7 by CyberVaca @ HackPlayers
+                                                     v0.8 by CyberVaca @ HackPlayers
 
-PSBotTelegram es un script escrito en Powershell que nos crea una backdoor que se conecta a Telegram y se gestiona desde Telegram. Al ejecutar el script nos va a pedir tres datos necesarios para crear el shellcode. 
+PSBotTelegram es un script escrito en Powershell, que nos crea una backdoor que se conecta a un BOT de Telegram. El BOT se controlará por mensajes de Telegram. Al ejecutar el script nos va a pedir tres datos necesarios para crear el shellcode. 
 
 # Instalación en Linux
 
     git clone https://github.com/hackplayers/psbotelegram.git
+    cd psbotelegram
     sudo apt-get update > /dev/null
     sudo apt-get install libunwind8 libicu55 
     wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.13/powershell_6.0.0-alpha.13-1ubuntu1.16.04.1_amd64.deb
     sudo dpkg -i powershell_6.0.0-alpha.13-1ubuntu1.16.04.1_amd64.deb
+    powershell ./PSBoTelegram.ps1
 
 # Instalación en Windows
 
@@ -37,7 +41,10 @@ Los datos que nos pide son los siguientes:
 **[+] Introduzca su Chat ID:** "Aquí deberemos poner nuestro ID de Telegram."  
 **[+] Introduzca el delay para la conexión:** "En este campo seteamos el delay(retardo) entre en pc con el backdoor y nuestro chat de telegram"   
 
-Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecutarlo en el equipo objetivo.  
+# Salidas de archivo:
+![Salidas](./images/OutFiles.png)  
+
+Una vez introducido estos datos, nos creará un shellcode en BASE64 en un tipo de archivo seleccionado para ejecutarlo en el equipo a auditar.  
 
 # Funciones del backdoor.
 
@@ -53,9 +60,10 @@ Una vez introducido estos datos, nos creará un shellcode en BASE64 para ejecuta
 [9]&nbsp;&nbsp;&nbsp;**/Download**&nbsp;&nbsp; (Download mas ruta nos descarga el archivo)  
 [10]&nbsp;&nbsp;**/Screenshot**&nbsp;&nbsp; (Realiza screenshot y nos lo envia)  
 [11]&nbsp;&nbsp;**/Audio**&nbsp;&nbsp; (/Audio X, Grabaría X segundos de audio y nos lo envia)  
-[12]&nbsp;&nbsp;**/Keylogger**&nbsp;&nbsp; (/Keylogger -- proximamente)  
-[13]&nbsp;&nbsp;**/BypassUAC**&nbsp;&nbsp; (Ejecuta el Bot con privilegios administrativos)  
-[14]&nbsp;&nbsp;**/Persistence**&nbsp;&nbsp; (/Persistence -- proximamente)  
-[15]&nbsp;&nbsp;**/MimiGatoz**&nbsp;&nbsp; (Ejecuta Mimikatz modificado para el bypass AV y nos envia los datos)
+[12]&nbsp;&nbsp;**/BypassUAC**&nbsp;&nbsp; (Ejecuta el Bot con privilegios administrativos)  
+[13]&nbsp;&nbsp;**/Persistence**&nbsp;&nbsp; (/Persistence ON/OFF)  
+[14]&nbsp;&nbsp;**/MimiGatoz**&nbsp;&nbsp; (Ejecuta Mimikatz modificado para el bypass AV y nos envia los datos)  
+[15]&nbsp;&nbsp;**/Keylogger-Selective**&nbsp;&nbsp; (Ejecuta un Keylogger selectivo, ejemplo /keylogger-Selective Facebook)  
+[16]&nbsp;&nbsp;**/Mimikittenz**&nbsp;&nbsp; (Ejecuta Mimikittenz, comprobando si el equipo es vulnerable y si no lo es, lo hace vulnerable... )  
 
 

